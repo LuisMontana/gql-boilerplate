@@ -3,7 +3,7 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 
 // #2 Import mongoose
-const mongoose = require('./config/database');
+require('./config/database');
 
 // #3 Import GraphQL type definitions
 const typeDefs = require('./modules/post/graphqlSchema');
