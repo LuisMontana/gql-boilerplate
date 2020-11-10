@@ -13,7 +13,7 @@ const GET_POSTS = gql`
 
 export const PostsList = () => {
 
-	const { loading, error, data } = useQuery(GET_POSTS);
+	const { loading, error, data } = useQuery(GET_POSTS, { pollInterval: 500, });
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error</p>;
