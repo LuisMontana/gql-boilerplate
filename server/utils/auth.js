@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../modules/users/user");
+const User = require("../modules/users/user.model.js");
 const { APP_SECRET } = require("../utils/constants");
 
 const tradeTokenForUser = (token) => {
