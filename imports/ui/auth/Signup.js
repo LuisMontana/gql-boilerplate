@@ -2,9 +2,9 @@ import React, { useContext, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { AppContext } from "/imports/context";
 
-const LOGIN = gql`
+const SIGNUP = gql`
 	mutation($email: String!, $password: String!) {
-		login(email: $email, password: $password) {
+		signup(email: $email, password: $password) {
 			token
 			user {
 				email
@@ -13,14 +13,14 @@ const LOGIN = gql`
 	}
 `;
 
-export const Login = () => {
+export const Signup = () => {
 	const { userData, setUserData } = useContext(AppContext);
 
 	const [values, setValues] = useState({ email: "", password: "", errorState: "" });
 
-	const [logUser, { loading }] = useMutation(LOGIN, {
+	const [signUser, { loading }] = useMutation(SIGNUP, {
 		onError: ({ message }) => setValues({ ...values, errorState: message }),
-		onCompleted: ({ login }) => setUserData({ ...userData, token: login.token, user: login.user })
+		onCompleted: ({ signup }) => setUserData({ ...userData, token: signup.token, user: signup.user })
 	});
 
 	const handleChange = (event) => {
@@ -39,12 +39,12 @@ export const Login = () => {
 			password: values.password
 		};
 
-		logUser({ variables: userData });
+		signUser({ variables: userData });
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<h1>Login</h1>
+			<h1>Signup</h1>
 			<label>
 				Email Address
 				<input type="email" name="email" value={values.email} onChange={handleChange} placeholder="Email Address" />
@@ -58,7 +58,7 @@ export const Login = () => {
 			{values.errorState && <p>{values.errorState}</p>}
 
 			<button type="submit" disabled={loading}>
-				{loading ? "Loging in" : "Sign in"}
+				{values.loading ? "Signing in" : "Sign in"}
 			</button>
 		</form>
 	);
