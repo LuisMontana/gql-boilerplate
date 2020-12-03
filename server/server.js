@@ -1,18 +1,43 @@
 // #1 Import Express and Apollo Server
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-
+const { merge } = require('lodash');
 // #2 Import mongoose
-const mongoose = require('./config/database');
+require('./config/database');
 
 // #3 Import GraphQL type definitions
-const typeDefs = require('./modules/post/graphqlSchema');
+const typeDefs = require('./graphqlSchema');
 
 // #4 Import GraphQL resolvers
-const resolvers = require('./modules/post/resolvers');
+const postResolvers = require('./modules/post/resolvers');
+const userResolvers = require('./modules/users/resolvers');
+
+const tradeTokenForUser = require('./utils/auth');
 
 // #5 Initialize an Apollo server
-const server = new ApolloServer({ typeDefs, resolvers });
+const resolvers = merge(postResolvers, userResolvers)
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async ({ req }) => {
+    let authToken = null;
+    let currentUser = null;
+    try {
+      authToken = req.headers.authorization;
+      if (authToken) {
+        currentUser = await tradeTokenForUser(authToken.replace('Bearer ', ''));
+      }
+    } catch {
+      console.warn(`Unable to authenticate using auth token: ${authToken}`);
+    }
+
+    return {
+      authToken,
+      currentUser
+    };
+  }
+});
 
 // #6 Initialize an Express application
 const app = express();
